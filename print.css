@@ -1,0 +1,47 @@
+/**
+ * Print styles
+ *
+ * @package Interactivity_Theme
+ */
+
+/* Print-specific styles */
+@media print {
+	.site-header,
+	.site-footer,
+	.sidebar,
+	.read-more,
+	.navigation,
+	.comments-area {
+		display: none;
+	}
+
+	body {
+		background: #fff;
+		color: #000;
+		font-size: 12pt;
+		line-height: 1.5;
+	}
+
+	a {
+		color: #000;
+		text-decoration: underline;
+	}
+
+	.entry-content {
+		font-size: 12pt;
+	}
+
+	.post-card {
+		box-shadow: none;
+		border: 1px solid #ddd;
+		page-break-inside: avoid;
+	}
+
+	img {
+		max-width: 100% !important;
+	}
+
+	@page {
+		margin: 2cm;
+	}
+}

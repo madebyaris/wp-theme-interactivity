@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="Interactivity Theme" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/squizlabs/PHP_CodeSniffer/master/phpcs.xsd">
+	<description>WordPress Coding Standards for Interactivity Theme</description>
+
+	<!-- Scan theme PHP files -->
+	<file>.</file>
+
+	<!-- Exclude vendor, build output, and tooling -->
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/build/*</exclude-pattern>
+	<exclude-pattern>*/.cursor/*</exclude-pattern>
+	<exclude-pattern>*/webpack.config.js</exclude-pattern>
+
+	<!-- Use WordPress standards -->
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+	<rule ref="WordPress-Extra"/>
+	<rule ref="WordPress-Docs"/>
+
+	<!-- Text domain for i18n -->
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="interactivity-theme"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>

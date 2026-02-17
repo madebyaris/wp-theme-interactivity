@@ -1,0 +1,43 @@
+{
+  "name": "interactivity-theme",
+  "version": "1.0.0",
+  "description": "Interactive WordPress theme using the Interactivity API for partial hydration",
+  "scripts": {
+    "build": "wp-scripts build --config webpack.config.js",
+    "start": "wp-scripts start --config webpack.config.js",
+    "dev": "wp-scripts start --config webpack.config.js",
+    "format": "wp-scripts format",
+    "lint": "npm run lint:php && npm run lint:css && npm run lint:js",
+    "lint:css": "wp-scripts lint-style",
+    "lint:js": "wp-scripts lint-js",
+    "lint:js:fix": "wp-scripts lint-js --fix",
+    "lint:php": "vendor/bin/phpcs",
+    "lint:php:fix": "vendor/bin/phpcbf",
+    "packages-update": "wp-scripts packages-update"
+  },
+  "dependencies": {
+    "@wordpress/interactivity": "^6.39.0",
+    "@wordpress/interactivity-router": "^2.39.0"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.24.0",
+    "typescript": "~5.3.0",
+    "@wordpress/scripts": "^30.7.0",
+    "babel-loader": "^9.1.0",
+    "copy-webpack-plugin": "^13.0.1"
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  },
+  "theme": {
+    "domain": "interactivity-theme",
+    "textDomain": "interactivity-theme",
+    "blocks": [
+      "blocks/navigation",
+      "blocks/search",
+      "blocks/counter",
+      "blocks/accordion"
+    ]
+  }
+}

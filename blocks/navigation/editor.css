@@ -1,0 +1,23 @@
+/**
+ * Navigation Block Editor Styles
+ *
+ * @package Interactivity_Theme
+ */
+
+/* Editor-specific styles */
+.wp-block-interactivity-theme-navigation {
+	background-color: #f5f5f5;
+	padding: 1rem;
+	border-radius: 4px;
+}
+
+.wp-block-interactivity-theme-navigation .wp-block-navigation__container {
+	background-color: #fff;
+	padding: 0.5rem;
+	border-radius: 4px;
+}
+
+.wp-block-interactivity-theme-navigation .wp-block-navigation__link {
+	padding: 0.5rem;
+	color: #333;
+}

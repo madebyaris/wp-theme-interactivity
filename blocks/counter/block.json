@@ -1,0 +1,36 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "interactivity-theme/counter",
+    "version": "1.0.0",
+    "title": "Interactive Counter",
+    "category": "theme",
+    "description": "A simple counter with increment/decrement buttons",
+    "keywords": [ "counter", "number", "increment", "decrement" ],
+    "textdomain": "interactivity-theme",
+    "supports": {
+        "interactivity": true
+    },
+    "viewScriptModule": "file:./view.js",
+    "attributes": {
+        "initialValue": {
+            "type": "number",
+            "default": 0
+        },
+        "min": {
+            "type": "number",
+            "default": 0
+        },
+        "max": {
+            "type": "number",
+            "default": 100
+        },
+        "step": {
+            "type": "number",
+            "default": 1
+        }
+    },
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php",
+    "style": "file:./style.css"
+}

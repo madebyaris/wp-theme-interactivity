@@ -1,0 +1,99 @@
+/**
+ * Counter Block Styles
+ *
+ * @package Interactivity_Theme
+ */
+
+.wp-block-counter {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	padding: 1.5rem;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba( 0, 0, 0, 0.1 );
+}
+
+.wp-block-counter__display {
+	text-align: center;
+}
+
+.wp-block-counter__value {
+	display: block;
+	font-size: 3.5rem;
+	font-weight: 700;
+	color: #0073aa;
+	line-height: 1;
+	min-width: 100px;
+	transition: transform 0.2s ease;
+}
+
+/* Animation when value changes */
+.wp-block-counter__value[data-wp-watch] {
+	animation: wp-block-counter__pulse 0.3s ease;
+}
+
+@keyframes wp-block-counter__pulse {
+	0%, 100% {
+		transform: scale( 1 );
+	}
+	50% {
+		transform: scale( 1.1 );
+	}
+}
+
+.wp-block-counter__controls {
+	display: flex;
+	gap: 0.75rem;
+	align-items: center;
+}
+
+.wp-block-counter__button {
+	padding: 0.75rem 1.5rem;
+	font-size: 1.125rem;
+	font-weight: 600;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.wp-block-counter__button:active {
+	transform: scale( 0.95 );
+}
+
+.wp-block-counter__button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+.wp-block-counter__button--decrement {
+	background-color: #e9ecef;
+	color: #333;
+}
+
+.wp-block-counter__button--decrement:hover:not( :disabled ) {
+	background-color: #dee2e6;
+}
+
+.wp-block-counter__button--increment {
+	background-color: #0073aa;
+	color: #fff;
+}
+
+.wp-block-counter__button--increment:hover:not( :disabled ) {
+	background-color: #005d8a;
+}
+
+.wp-block-counter__button--reset {
+	background-color: transparent;
+	color: #666;
+	font-size: 0.875rem;
+	padding: 0.5rem 1rem;
+}
+
+.wp-block-counter__button--reset:hover {
+	color: #333;
+	background-color: #f5f5f5;
+}

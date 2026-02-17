@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "interactivity-theme/navigation",
+    "version": "1.0.0",
+    "title": "Interactive Navigation",
+    "category": "theme",
+    "description": "A responsive navigation menu with client-side interactivity",
+    "keywords": [ "navigation", "menu", "responsive" ],
+    "textdomain": "interactivity-theme",
+    "supports": {
+        "interactivity": {
+            "clientNavigation": true
+        },
+        "align": [ "wide", "full" ]
+    },
+    "viewScriptModule": "file:./view.js",
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php",
+    "editorStyle": "file:./editor.css",
+    "style": "file:./style.css"
+}

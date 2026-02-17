@@ -1,0 +1,32 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "interactivity-theme/search",
+    "version": "1.0.0",
+    "title": "Interactive Search",
+    "category": "theme",
+    "description": "A live search input that fetches results from WordPress REST API",
+    "keywords": [ "search", "live search", "instant search" ],
+    "textdomain": "interactivity-theme",
+    "supports": {
+        "interactivity": true
+    },
+    "viewScriptModule": "file:./view.js",
+    "attributes": {
+        "placeholder": {
+            "type": "string",
+            "default": "Search..."
+        },
+        "postType": {
+            "type": "string",
+            "default": "post"
+        },
+        "maxResults": {
+            "type": "number",
+            "default": 5
+        }
+    },
+    "editorScript": "file:./index.js",
+    "render": "file:./render.php",
+    "style": "file:./style.css"
+}

@@ -1,0 +1,7 @@
+{
+  "enabled": false,
+  "maxIterations": 5,
+  "commands": [],
+  "stopOnSuccess": true,
+  "_comment": "Set 'enabled' to true to enable the grind loop. When enabled with empty commands, it auto-detects from package.json (test > lint > build). This WordPress theme may not have node_modules installed, so auto-detection can fail."
+}

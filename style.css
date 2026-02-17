@@ -195,8 +195,8 @@ img {
 		flex-direction: column;
 		position: absolute;
 		top: 100%;
-		left: 0;
 		right: 0;
+		min-width: 280px;
 		margin-top: 0.5rem;
 		background-color: var(--theme-color-surface);
 		padding: var(--theme-spacing-unit);

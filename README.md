@@ -87,33 +87,19 @@ npm run dev
 
 ### SPA Navigation Flow
 
-```
-User clicks link
-       |
-       v
-Inline script intercepts click (wp_head, priority 1)
-       |
-       v
-Dispatches "theme:spa:navigate" event
-       |
-       v
-Navigation router (view.ts) picks it up
-       |
-       v
-Is it cached? ----YES----> Use cached HTML
-       |
-       NO
-       |
-       v
-Fetch /wp/v2/theme/route-html?path=...
-       |
-       v
-Server renders HTML using theme templates (PHP)
-       |
-       v
-Swap content into [data-theme-route-mount]
-Update document.title, body classes, browser history
-Load any post-specific CSS/JS on demand
+```mermaid
+flowchart TD
+    A[User clicks link] --> B[Inline script intercepts click]
+    B --> C[Dispatches theme:spa:navigate event]
+    C --> D[Navigation router view.ts picks it up]
+    D --> E{Is it cached?}
+    E -- YES --> F[Use cached HTML]
+    E -- NO --> G[Fetch /wp/v2/theme/route-html]
+    G --> H[Server renders HTML using PHP templates]
+    H --> F
+    F --> I[Swap content into page]
+    I --> J[Update title, body classes, browser history]
+    J --> K[Load post-specific CSS/JS on demand]
 ```
 
 ### REST Endpoints

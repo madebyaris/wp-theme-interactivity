@@ -1,6 +1,7 @@
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const path = require( 'path' );
 const CopyWebpackPlugin = require( 'copy-webpack-plugin' );
+const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 
 const blocks = [ 'navigation', 'search', 'counter', 'accordion' ];
 
@@ -26,12 +27,37 @@ blocks.forEach( ( block ) => {
 module.exports = {
 	...defaultConfig,
 	entry,
+	// Build as ES modules so viewScriptModule bundles import @wordpress/interactivity
+	// instead of referencing window.wp.interactivity.
+	experiments: {
+		...( defaultConfig.experiments || {} ),
+		outputModule: true,
+	},
 	output: {
 		...defaultConfig.output,
 		path: path.resolve( __dirname, 'build' ),
+		module: true,
+		chunkFormat: 'module',
+		environment: {
+			...( defaultConfig.output?.environment || {} ),
+			module: true,
+		},
+		library: {
+			type: 'module',
+		},
 	},
 	plugins: [
-		...( defaultConfig.plugins || [] ),
+		...( defaultConfig.plugins || [] ).filter(
+			( p ) => p.constructor.name !== 'DependencyExtractionWebpackPlugin'
+		),
+		new DependencyExtractionWebpackPlugin( {
+			// WordPress core registers @wordpress/interactivity, not wp-interactivity.
+			// Override so asset files use the correct script module ID.
+			requestToHandle: ( request ) =>
+				request === '@wordpress/interactivity'
+					? '@wordpress/interactivity'
+					: undefined,
+		} ),
 		new CopyWebpackPlugin( {
 			patterns: copyPatterns,
 		} ),

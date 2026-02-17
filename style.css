@@ -11,7 +11,7 @@ Requires PHP: 7.4
 License: GNU General Public License v2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: interactivity-theme
-Tags: block-styles, block-patterns, editor-style, accessibility-ready, custom-colors, custom-logo, custom-menu, editor-style, featured-images, footer-widgets, translation-ready
+Tags: block-styles, block-patterns, editor-style, accessibility-ready, custom-colors, custom-logo, custom-menu, editor-style, featured-images, footer-widgets, translation-ready, woocommerce, e-commerce
 */
 
 /*
@@ -342,6 +342,18 @@ body.search-results .page-header {
 	margin-bottom: 1rem;
 }
 
+.post-thumbnail {
+	margin: 1rem 0;
+}
+
+.post-thumbnail img {
+	display: block;
+	width: 100%;
+	height: 240px;
+	object-fit: cover;
+	border-radius: 8px;
+}
+
 .entry-content {
 	line-height: 1.7;
 }
@@ -633,5 +645,56 @@ body.isNavigating::before {
 	100% {
 		transform: scaleX(0.2);
 		opacity: 0.5;
+	}
+}
+
+/* WooCommerce compatibility */
+.woocommerce-page .site-main {
+	padding: 1rem 0 2rem;
+}
+
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce input.button,
+.woocommerce #respond input#submit {
+	background-color: var(--theme-color-primary);
+	color: #fff;
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 6px;
+	font-weight: 600;
+}
+
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce input.button:hover,
+.woocommerce #respond input#submit:hover {
+	background-color: var(--theme-color-primary-hover);
+	color: #fff;
+}
+
+/* WooCommerce blocks */
+.wc-block-components-button,
+.wp-block-button__link {
+	background-color: var(--theme-color-primary) !important;
+	color: #fff !important;
+}
+
+.wc-block-components-button:hover,
+.wp-block-button__link:hover {
+	background-color: var(--theme-color-primary-hover) !important;
+	color: #fff !important;
+}
+
+/* Shop layout with sidebar */
+.woocommerce-page .site-main + .sidebar-shop,
+body.woocommerce .site-main + .sidebar-shop {
+	margin-top: 2rem;
+}
+
+@media (min-width: 768px) {
+	.woocommerce-page .site-main,
+	body.woocommerce .site-main {
+		display: block;
 	}
 }

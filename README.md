@@ -39,7 +39,7 @@ Link clicks only fetch the **content that changed**:
 
 2. **Two-layer caching** -- Archive and list pages are cached in `localStorage` for 5 minutes (up to 50 routes). The server also caches REST responses with WordPress transients. Single posts always fetch fresh so comments stay current.
 
-3. **Minimal JavaScript** -- The SPA router is ~15 KB. Interactive blocks (accordion, search, counter) use the Interactivity API for partial hydration -- only the parts that need interactivity get JavaScript.
+3. **Minimal JavaScript** -- The SPA router is ~15 KB. Interactive blocks (accordion, search, counter) use the Interactivity API for partial hydration -- only the parts that need interactivity get JavaScript. Cart, checkout, and my-account use full page loads for reliability.
 
 4. **Dynamic asset loading** -- When navigating to a post that uses special blocks or plugins, only the CSS/JS for that specific post is loaded on demand. No upfront bundle of every possible asset.
 
@@ -50,7 +50,7 @@ Link clicks only fetch the **content that changed**:
 - **Instant navigation** -- SPA-like routing with server-rendered HTML
 - **Interactivity API** -- WordPress 6.5+ partial hydration for interactive blocks
 - **4 custom blocks** -- Navigation (SPA router + responsive menu), Search (live REST API search), Counter, Accordion
-- **WooCommerce compatible** -- Fixes the Order Attribution `CustomElementRegistry` conflict
+- **WooCommerce compatible** -- Full theme support, product gallery, blocks, shop sidebar; cart/checkout/my-account use full page load; fixes Order Attribution `CustomElementRegistry` conflict
 - **Design tokens** -- CSS custom properties for easy theming (see [THEME-CUSTOMIZATION.md](THEME-CUSTOMIZATION.md))
 - **Print styles** -- Clean print output with navigation/footer hidden
 - **TypeScript** -- All block source code is typed
@@ -121,6 +121,7 @@ flowchart TD
 | Single post | `single.php` | `template-parts/route-single.php` |
 | Page | `page.php` | `template-parts/route-page.php` |
 | Archive / Home / Search | `index.php`, `archive.php`, `search.php` | `template-parts/route-loop.php` |
+| Shop / Product / Product archive | `woocommerce.php` | WooCommerce content; cart/checkout/my-account use `page.php` (full page load) |
 
 ## File Structure
 
@@ -128,17 +129,18 @@ flowchart TD
 interactivity-theme/
 ├── style.css                  # Theme metadata + design tokens
 ├── print.css                  # Print-friendly styles
-├── functions.php              # REST routes, caching, WooCommerce fix, SPA setup
+├── functions.php              # REST routes, caching, WooCommerce support, SPA setup
 ├── front-page.php             # Front page (latest posts or static page)
 ├── index.php / archive.php / search.php / single.php / page.php
-├── header.php / footer.php / sidebar.php / comments.php
+├── woocommerce.php            # Shop, product archives, single product
+├── header.php / footer.php / sidebar.php / sidebar-shop.php / comments.php
 ├── template-parts/
 │   ├── route-single.php       # Single post content (used by SPA + direct load)
 │   ├── route-page.php         # Page content
 │   └── route-loop.php         # Archive / home / search loop
 ├── blocks/                    # Block source (TypeScript + PHP)
 │   ├── navigation/            # SPA router + responsive menu
-│   │   ├── view.ts            # ~580 lines: routing, caching, asset injection
+│   │   ├── view.ts            # Routing, caching, asset injection, SPA skip for WooCommerce
 │   │   └── render.php         # Server-rendered menu markup
 │   ├── search/                # Live search with REST API
 │   ├── counter/               # Increment/decrement demo
@@ -186,7 +188,8 @@ Full token reference: [THEME-CUSTOMIZATION.md](THEME-CUSTOMIZATION.md)
 |---------|-----|
 | Blank content on refresh | Make sure `template-parts/route-page.php`, `route-single.php`, `route-loop.php` exist |
 | Stale content after SPA nav | Clear `localStorage` key `theme_route_cache` |
-| WooCommerce `CustomElementRegistry` error | Theme auto-dequeues the script on non-checkout pages -- check `functions.php` is active |
+| WooCommerce `CustomElementRegistry` error | Theme auto-dequeues order-attribution script on non-checkout pages -- check `functions.php` is active |
+| `wp-interactivity` not registered | Run `npm run build`; theme uses ES modules with `@wordpress/interactivity` dependency |
 | Blocks not in editor | Run `npm install && npm run build`, verify WP 6.5+ |
 
 ## Author

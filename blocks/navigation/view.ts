@@ -313,6 +313,16 @@ function isEligibleInternalLink(
 		return false;
 	}
 
+	// WooCommerce: full page load for cart, checkout, my-account.
+	const pathNorm = url.pathname.replace( /\/+$/, '' ) || '/';
+	if (
+		pathNorm.startsWith( '/cart' ) ||
+		pathNorm.startsWith( '/checkout' ) ||
+		pathNorm.startsWith( '/my-account' )
+	) {
+		return false;
+	}
+
 	return true;
 }
 

@@ -39,6 +39,45 @@ function interactivity_theme_setup() {
 	);
 
 	add_theme_support( 'customize-selective-refresh-widgets' );
+
+	// WooCommerce compatibility.
+	if ( class_exists( 'WooCommerce' ) ) {
+		add_theme_support(
+			'woocommerce',
+			array(
+				'thumbnail_image_width' => 300,
+				'single_image_width'    => 600,
+				'product_grid'          => array(
+					'default_rows'    => 3,
+					'min_rows'        => 1,
+					'max_rows'        => 8,
+					'default_columns' => 3,
+					'min_columns'     => 1,
+					'max_columns'     => 6,
+				),
+			)
+		);
+		add_theme_support( 'wc-product-gallery-zoom' );
+		add_theme_support( 'wc-product-gallery-lightbox' );
+		add_theme_support( 'wc-product-gallery-slider' );
+		// WooCommerce block compatibility.
+		add_theme_support( 'woocommerce-block-styles' );
+		add_theme_support( 'woocommerce-block-theme-has-button-styles' );
+		add_filter(
+			'body_class',
+			function ( $classes ) {
+				if (
+					( function_exists( 'is_woocommerce' ) && is_woocommerce() ) ||
+					( function_exists( 'is_cart' ) && is_cart() ) ||
+					( function_exists( 'is_checkout' ) && is_checkout() )
+				) {
+					$classes[] = 'woocommerce-block-theme-has-button-styles';
+				}
+				return $classes;
+			},
+			20
+		);
+	}
 }
 add_action( 'after_setup_theme', 'interactivity_theme_setup' );
 
@@ -77,6 +116,21 @@ function interactivity_theme_widgets_init() {
 			'after_title'   => '</h3>',
 		)
 	);
+
+	// WooCommerce shop sidebar.
+	if ( class_exists( 'WooCommerce' ) ) {
+		register_sidebar(
+			array(
+				'name'          => __( 'Shop Sidebar', 'interactivity-theme' ),
+				'id'            => 'sidebar-shop',
+				'description'   => __( 'Add widgets here to appear on WooCommerce shop and product pages.', 'interactivity-theme' ),
+				'before_widget' => '<section id="%1$s" class="widget %2$s">',
+				'after_widget'  => '</section>',
+				'before_title'  => '<h2 class="widget-title">',
+				'after_title'   => '</h2>',
+			)
+		);
+	}
 }
 add_action( 'widgets_init', 'interactivity_theme_widgets_init' );
 
@@ -88,7 +142,7 @@ function interactivity_theme_scripts() {
 		'interactivity-theme-style',
 		get_stylesheet_uri(),
 		array(),
-		'1.0.0'
+		'1.0.1'
 	);
 
 	// The header navigation uses Interactivity API directives outside block content.
@@ -150,6 +204,8 @@ function interactivity_theme_spa_intercept_script() {
 			try {
 				var url = new URL(a.href);
 				if (url.origin !== location.origin || url.pathname.indexOf('/wp-admin') === 0 || url.pathname.indexOf('/wp-login') === 0) return;
+				var p = url.pathname.replace(/\/+$/, '') || '/';
+				if (p.indexOf('/cart') === 0 || p.indexOf('/checkout') === 0 || p.indexOf('/my-account') === 0) return;
 			} catch (err) { return; }
 			e.preventDefault();
 			e.stopImmediatePropagation();
@@ -160,6 +216,35 @@ function interactivity_theme_spa_intercept_script() {
 	wp_print_inline_script_tag( $script, array( 'id' => 'interactivity-theme-spa-intercept' ) );
 }
 add_action( 'wp_head', 'interactivity_theme_spa_intercept_script', 1 );
+
+/**
+ * Inline script: search toggle opens overlay. Runs in body so it attaches before deferred nav script.
+ * Uses capture + stopImmediatePropagation so it reliably handles the click.
+ */
+function interactivity_theme_search_toggle_script() {
+	$script = "
+	(function() {
+		document.addEventListener('click', function(e) {
+			if (!e.target.closest || !e.target.closest('.search-toggle')) return;
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			var overlay = document.getElementById('header-search-overlay');
+			var toggle = document.querySelector('.search-toggle');
+			if (!overlay || !toggle) return;
+			var isOpen = overlay.classList.toggle('is-open');
+			overlay.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+			toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			document.body.style.overflow = isOpen ? 'hidden' : '';
+			if (isOpen) {
+				var input = overlay.querySelector('.wp-block-search__input');
+				if (input) setTimeout(function() { input.focus(); }, 100);
+			}
+		}, true);
+	})();
+	";
+	wp_print_inline_script_tag( $script, array( 'id' => 'interactivity-theme-search-toggle' ) );
+}
+add_action( 'wp_head', 'interactivity_theme_search_toggle_script', 2 );
 
 /**
  * WooCommerce compatibility: prevent order-attribution script from loading on non-checkout pages.
@@ -176,6 +261,27 @@ function interactivity_theme_woocommerce_order_attribution_fix() {
 	}
 }
 add_action( 'wp_print_scripts', 'interactivity_theme_woocommerce_order_attribution_fix', 100 );
+
+/**
+ * WooCommerce content wrappers: use theme layout (site-main, container).
+ */
+function interactivity_theme_woocommerce_wrapper_start() {
+	echo '<main id="primary" class="site-main woocommerce-page"><div class="container">';
+}
+function interactivity_theme_woocommerce_wrapper_end() {
+	echo '</div></main>';
+}
+add_action( 'woocommerce_before_main_content', 'interactivity_theme_woocommerce_wrapper_start', 10 );
+add_action( 'woocommerce_after_main_content', 'interactivity_theme_woocommerce_wrapper_end', 10 );
+
+add_action(
+	'woocommerce_init',
+	function () {
+		remove_action( 'woocommerce_before_main_content', 'woocommerce_output_content_wrapper', 10 );
+		remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wrapper_end', 10 );
+	},
+	20
+);
 
 /**
  * Register custom blocks from the build directory.

@@ -105,5 +105,33 @@ store( 'interactivity-theme/search', {
 			context.showResults = false;
 			context.isLoading = false;
 		},
+
+		handleKeydown( event: KeyboardEvent ) {
+			if ( event.key === 'Enter' ) {
+				event.preventDefault();
+				const ctx = getContext< SearchContext >();
+				const query = ctx.searchQuery.trim();
+				if ( query ) {
+					const url = `${ window.location.origin }/?s=${ encodeURIComponent( query ) }`;
+					window.dispatchEvent(
+						new CustomEvent( 'theme:spa:navigate', {
+							detail: { href: url },
+						} )
+					);
+				}
+			}
+		},
+
+		submitSearch() {
+			const context = getContext< SearchContext >();
+			const query = context.searchQuery.trim();
+			if ( ! query ) {
+				return;
+			}
+			const url = `${ window.location.origin }/?s=${ encodeURIComponent( query ) }`;
+			window.dispatchEvent(
+				new CustomEvent( 'theme:spa:navigate', { detail: { href: url } } )
+			);
+		},
 	},
 } );

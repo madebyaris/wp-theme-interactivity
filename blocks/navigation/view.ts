@@ -9,7 +9,7 @@
 
 declare global {
 	interface Window {
-		interactivityTheme?: { apiBase?: string };
+		interactivityTheme?: { apiBase?: string; homeUrl?: string };
 	}
 }
 
@@ -508,11 +508,88 @@ async function runNavigation(
 	}
 }
 
+function openSearchOverlay(): void {
+	const overlay = document.getElementById( 'header-search-overlay' );
+	const toggle = document.querySelector( '.search-toggle' );
+	if ( overlay && toggle ) {
+		overlay.classList.add( 'is-open' );
+		overlay.setAttribute( 'aria-hidden', 'false' );
+		toggle.setAttribute( 'aria-expanded', 'true' );
+		document.body.style.overflow = 'hidden';
+		const input = overlay.querySelector< HTMLInputElement >(
+			'.wp-block-search__input'
+		);
+		setTimeout( () => input?.focus(), 100 );
+	}
+}
+
+function closeSearchOverlay(): void {
+	const overlay = document.getElementById( 'header-search-overlay' );
+	const toggle = document.querySelector( '.search-toggle' );
+	if ( overlay && toggle ) {
+		overlay.classList.remove( 'is-open' );
+		overlay.setAttribute( 'aria-hidden', 'true' );
+		toggle.setAttribute( 'aria-expanded', 'false' );
+		document.body.style.overflow = '';
+	}
+}
+
+function getSearchUrl( query: string ): string {
+	const base =
+		typeof window !== 'undefined' && window.interactivityTheme?.homeUrl
+			? window.interactivityTheme.homeUrl
+			: `${ window.location.origin }/`;
+	const url = new URL( base );
+	url.searchParams.set( 's', query );
+	return url.href;
+}
+
+function handleSearchSubmit(): boolean {
+	const overlay = document.getElementById( 'header-search-overlay' );
+	const input = overlay?.querySelector< HTMLInputElement >(
+		'.wp-block-search__input'
+	);
+	const query = input?.value?.trim();
+	if ( ! query ) {
+		return false;
+	}
+	closeSearchOverlay();
+	void runNavigation( getSearchUrl( query ) );
+	return true;
+}
+
 function handleNavigationClick( event: MouseEvent ): void {
 	const raw = event.target as Node | null;
 	const target: Element | null =
 		raw instanceof Element ? raw : raw?.parentElement ?? null;
 	if ( ! target ) {
+		return;
+	}
+
+	const searchButton = target.closest( '.wp-block-search__button' );
+	if ( searchButton ) {
+		event.preventDefault();
+		event.stopPropagation();
+		handleSearchSubmit();
+		return;
+	}
+
+	const searchToggle = target.closest( '.search-toggle' );
+	if ( searchToggle ) {
+		event.preventDefault();
+		const overlay = document.getElementById( 'header-search-overlay' );
+		if ( overlay?.classList.contains( 'is-open' ) ) {
+			closeSearchOverlay();
+		} else {
+			openSearchOverlay();
+		}
+		return;
+	}
+
+	const searchClose = target.closest( '[data-search-close]' );
+	if ( searchClose ) {
+		event.preventDefault();
+		closeSearchOverlay();
 		return;
 	}
 
@@ -547,9 +624,13 @@ function initializeNavigationRuntime(): void {
 		const detail = ( e as CustomEvent< { href: string } > ).detail;
 		if ( detail?.href ) {
 			closeMenu();
+			closeSearchOverlay();
 			void runNavigation( detail.href );
 		}
 	} );
+
+	// Close search overlay when route changes (e.g. after clicking a result)
+	window.addEventListener( 'theme:route:changed', closeSearchOverlay );
 
 	// Fallback: direct click handler (inline script may be blocked by CSP etc.)
 	document.addEventListener( 'click', handleNavigationClick, true );
@@ -563,8 +644,24 @@ function initializeNavigationRuntime(): void {
 	} );
 
 	document.addEventListener( 'keydown', ( event: KeyboardEvent ) => {
-		if ( event.key === 'Escape' && navigationState.isMenuOpen ) {
-			closeMenu();
+		if ( event.key === 'Escape' ) {
+			const searchOverlay = document.getElementById( 'header-search-overlay' );
+			if ( searchOverlay?.classList.contains( 'is-open' ) ) {
+				closeSearchOverlay();
+			} else if ( navigationState.isMenuOpen ) {
+				closeMenu();
+			}
+		} else if ( event.key === 'Enter' ) {
+			const target = event.target as Element | null;
+			if (
+				target?.closest( '#header-search-overlay' ) &&
+				target?.matches( '.wp-block-search__input' )
+			) {
+				event.preventDefault();
+				if ( handleSearchSubmit() ) {
+					event.stopPropagation();
+				}
+			}
 		}
 	} );
 

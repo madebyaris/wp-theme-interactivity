@@ -30,6 +30,7 @@ $context = array(
 			class="wp-block-search__input"
 			placeholder="<?php echo esc_attr( $placeholder ); ?>"
 			data-wp-on--input="actions.handleInput"
+			data-wp-on--keydown="actions.handleKeydown"
 			data-wp-bind--value="context.searchQuery"
 			data-wp-on--focus="actions.showResults"
 			data-wp-on--blur="actions.hideResults"
@@ -44,6 +45,15 @@ $context = array(
 				<circle class="path" cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="2"></circle>
 			</svg>
 		</span>
+
+		<button
+			type="button"
+			class="wp-block-search__button"
+			data-wp-on--click="actions.submitSearch"
+			aria-label="<?php esc_attr_e( 'Search', 'interactivity-theme' ); ?>"
+		>
+			<?php esc_html_e( 'Search', 'interactivity-theme' ); ?>
+		</button>
 	</div>
 
 	<div

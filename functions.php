@@ -111,7 +111,8 @@ function interactivity_theme_scripts() {
 			'interactivity-theme-navigation-view',
 			'interactivityTheme',
 			array(
-				'apiBase' => rest_url( 'wp/v2' ),
+				'apiBase'  => rest_url( 'wp/v2' ),
+				'homeUrl'  => home_url( '/' ),
 			)
 		);
 	}

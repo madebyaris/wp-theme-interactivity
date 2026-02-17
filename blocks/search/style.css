@@ -14,10 +14,12 @@
 	position: relative;
 	display: flex;
 	align-items: center;
+	gap: 0.5rem;
 }
 
 .wp-block-search__input {
-	width: 100%;
+	flex: 1;
+	min-width: 0;
 	padding: 0.75rem 1rem;
 	padding-right: 2.5rem;
 	border: 2px solid #ddd;
@@ -34,6 +36,23 @@
 
 .wp-block-search__input::placeholder {
 	color: #999;
+}
+
+.wp-block-search__button {
+	flex-shrink: 0;
+	padding: 0.75rem 1.25rem;
+	background-color: var(--theme-color-primary, #0073aa);
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+}
+
+.wp-block-search__button:hover {
+	background-color: var(--theme-color-primary-hover, #005d8a);
 }
 
 .wp-block-search__loading-indicator {
